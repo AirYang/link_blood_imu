@@ -6,24 +6,40 @@ var device = aliyunIot.device({
     deviceSecret: 'y2zVjni33PtSjELt5ARgWZ5HExEIO45v'
 });
 
+var redis = require('redis');
+
+var subscriber = redis.createClient({ db: 0 });
+
 device.on('connect', () => {
-    console.log('server connect successfully!');
+    console.log('aliyunIot connect...');
 });
 
-device.on('error', (err) => {
+device.on('error', (error) => {
     console.log(err)
 });
 
-device.subscribe('  /sys/a1SwQ5EKSxN/MTZRlji2GehHtZWHFu6W/thing/event/property/post/post_reply');
+device.subscribe('/sys/a1SwQ5EKSxN/MTZRlji2GehHtZWHFu6W/thing/event/property/post/post_reply');
 
 device.on('message', function (topic, payload) {
     console.log(topic, payload.toString());
 });
 
-setInterval(() => {
+subscriber.on("connect", function (error) {
+    console.log("redis connect...");
+});
+
+subscriber.on("error", function (error) {
+    console.log("redis error:", error);
+});
+
+subscriber.on("message", function (channel, message) {
+    console.log(Buffer.from(message, "binary"), channel);
+
     device.postProps({
         SystolicBloodPressure: 90,
         DiastolicBloodPressure: 110
     });
-}, 1000);
+});
+
+subscriber.subscribe("serialdata");
 
