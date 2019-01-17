@@ -1,12 +1,17 @@
 # open redis server
-gnome-terminal -x bash -c "cd ~/Downloads/package/redis-5.0.3; ./src/redis-server ./redis.conf"
+gnome-terminal -x bash -c "cd ./redis-5.0.3; ./src/redis-server ./redis.conf"
 
 sleep 1
 
 # connect aliyun iot
-gnome-terminal -x bash -c "cd ~/Documents/code/link_blood_imu; node index.js"
+gnome-terminal -x bash -c "node src/link/link.js"
 
 sleep 1
 
-# read serial data
-gnome-terminal -x bash -c "cd ~/Documents/code/link_blood_imu; sudo chmod 777 /dev/ttyUSB0; python3 data.py"
+# read blood data
+gnome-terminal -x bash -c "python3 src/blood/blood.py"
+
+sleep 1
+
+# read imu data
+gnome-terminal -x bash -c "cd src/imu/build/; cmake ..; make; ./imu"

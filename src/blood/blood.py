@@ -30,7 +30,7 @@ def readSerialPortAndSend(serialport, redishandle, bytesize):
 
 def main():
     serialport = serial.Serial(
-        "/dev/ttyUSB0", baudrate=115200, stopbits=serial.STOPBITS_ONE, timeout=0.5)
+        "/dev/ttyUSBBLOOD", baudrate=115200, stopbits=serial.STOPBITS_ONE, timeout=0.5)
     redishandle = redis.StrictRedis(host="127.0.0.1", port=6379, db=0)
 
     bytesize = 6
