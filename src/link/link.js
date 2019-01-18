@@ -8,7 +8,7 @@ var device = aliyunIot.device({
 
 var redis = require('redis');
 
-var subscriber = redis.createClient({ db: 0 });
+var subscriber = redis.createClient();
 
 device.on('connect', () => {
     console.log('aliyun iot connect...');
@@ -33,15 +33,24 @@ subscriber.on("error", function (error) {
 });
 
 subscriber.on("message", function (channel, message) {
-    let buffer = Buffer.from(message, "hex"); 
-    if(buffer.readUInt8(0) == 253){
-        console.log(channel, buffer.readUInt8(1), buffer.readUInt8(2));
-        device.postProps({
-            SystolicBloodPressure: buffer[1],
-            DiastolicBloodPressure: buffer[2]
-        });
+
+    // recv blood data
+    if (channel == "blooddata") {
+        let buffer = Buffer.from(message, "hex");
+        if (buffer.readUInt8(0) == 253) {
+            console.log(channel, buffer.readUInt8(1), buffer.readUInt8(2));
+            device.postProps({
+                SystolicBloodPressure: buffer[1],
+                DiastolicBloodPressure: buffer[2]
+            });
+        }
+    }
+
+    //recv imu data
+    else if (channel == "imudata") {
+
     }
 });
 
-subscriber.subscribe("serialdata");
-
+subscriber.subscribe("blooddata");
+subscriber.subscribe("imudata");

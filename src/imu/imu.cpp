@@ -9,6 +9,10 @@
 #include "lpsensor/LpmsSensorManagerI.h"
 #endif
 
+extern "C"{
+#include "hiredis/hiredis.h"
+}
+
 int main(int argc, char *argv[])
 {
     ImuData d;
@@ -30,6 +34,18 @@ int main(int argc, char *argv[])
     // Connects to LPMS-CURS2 sensor try virtual com port 
     LpmsSensorI* lpms = manager->addSensor(DEVICE_LPMS_RS232, "/dev/ttyUSBIMU");
 
+    // Connect redis server
+    // struct timeval timeout = { 1, 500000 };
+    redisContext *c = redisConnectWithTimeout("127.0.0.1", 6379, { 1, 500000 });
+    if (c == NULL || c->err) {
+        if (c) {
+            printf("Redis connection error: %s\n", c->errstr);
+            redisFree(c);
+        } else {
+            printf("Redis connection error: can't allocate redis context\n");
+        }
+        exit(1);
+    }
 
     while(1) 
     {		 
@@ -41,9 +57,9 @@ int main(int argc, char *argv[])
             d = lpms->getCurrentData();
 
             // Shows data
-            printf("Timestamp=%f, qW=%f, qX=%f, qY=%f, qZ=%f, x=%f, y=%f, z=%f\n", 
-                d.timeStamp, d.q[0], d.q[1], d.q[2], d.q[3],
-                d.r[0], d.r[1], d.r[2]);
+            // printf("Timestamp=%f, qW=%f, qX=%f, qY=%f, qZ=%f, x=%f, y=%f, z=%f\n", 
+            //     d.timeStamp, d.q[0], d.q[1], d.q[2], d.q[3],
+            //     d.r[0], d.r[1], d.r[2]);
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
@@ -53,6 +69,9 @@ int main(int argc, char *argv[])
 
     // Deletes LpmsSensorManager object 
     delete manager;
+
+     /* Disconnects and frees the context */
+    redisFree(c);
 
     return 0;
 }

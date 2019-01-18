@@ -21,7 +21,7 @@ def readSerialPortAndSend(serialport, redishandle, bytesize):
         if(len(data) < bytesize):
             return print("serialport can't read bytesize!")
         else:
-            redishandle.publish("serialdata",data.hex())
+            redishandle.publish("blooddata", data.hex())
             return print(data.hex())
     else:
         print("serialport is closed!")
@@ -31,7 +31,7 @@ def readSerialPortAndSend(serialport, redishandle, bytesize):
 def main():
     serialport = serial.Serial(
         "/dev/ttyUSBBLOOD", baudrate=115200, stopbits=serial.STOPBITS_ONE, timeout=0.5)
-    redishandle = redis.StrictRedis(host="127.0.0.1", port=6379, db=0)
+    redishandle = redis.StrictRedis(host="127.0.0.1", port=6379)
 
     bytesize = 6
     while(serialport.isOpen()):

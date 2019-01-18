@@ -1,3 +1,6 @@
+# go to the project directory
+cd ~/Documents/code/link_blood_imu
+
 # open redis server
 gnome-terminal -x bash -c "cd ./redis-5.0.3; ./src/redis-server ./redis.conf"
 
@@ -14,4 +17,4 @@ gnome-terminal -x bash -c "python3 src/blood/blood.py"
 sleep 1
 
 # read imu data
-gnome-terminal -x bash -c "cd src/imu/build/; cmake ..; make; ./imu"
+# gnome-terminal -x bash -c "cd src/imu/build/; cmake ..; make; ./imu"
