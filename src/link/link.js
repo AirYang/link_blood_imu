@@ -18,7 +18,7 @@ device.on('error', (error) => {
 });
 
 device.on('message', function (topic, payload) {
-    console.log(topic, payload.toString());
+    // console.log(topic, payload.toString());
 });
 
 device.serve('property/set', function (params) {
@@ -57,27 +57,75 @@ sub.on("message", function (channel, message) {
     // recv blood data
     if (channel == "blooddata") {
         let blooddata = JSON.parse(message);
+        let bloodtime = new Date();
+        console.log("bloodtime", bloodtime.getTime());
+        console.log("pulserate", blooddata.pulserate);
         console.log("systolicbp", blooddata.systolicbp);
         console.log("diastolicbp", blooddata.diastolicbp);
-        console.log("pulserate", blooddata.pulserate);
+
+        if ((blooddata.pulserate == 0) || (blooddata.systolicbp == 0) || (blooddata.diastolicbp == 0) || (blooddata.pulserate == 255) || (blooddata.systolicbp == 255) || (blooddata.diastolicbp == 255)) {
+            device.postProps({
+                Status: 5
+            });
+        }
+
+        else {
+            device.postProps({
+                Status: 0
+            });
+        }
     }
 
     // recv imu data
     else if (channel == "imudata") {
         let imudata = JSON.parse(message);
-        console.log("quaternion", imudata.quaternion);
+        let imutime = new Date();
+        console.log("imutime", imutime.getTime());
         console.log("euler", imudata.euler);
+        console.log("quaternion", imudata.quaternion);
+        console.log("acceleration", imudata.acceleration);
     }
 
-    // recv erase data
+    // recv erase status
     else if (channel == "erase") {
-        let erasedata = JSON.parse(message);
-        console.log("erase", erasedata.erase);
+        let status = JSON.parse(message);
+        console.log("erase", status.erase);
+
+        if (status.erase == 1) {
+            device.postProps({
+                Status: 1
+            });
+        }
+    }
+
+    //recv calibration status
+    else if (channel == "calibration") {
+        let status = JSON.parse(message);
+        console.log("calibration", status.calibration);
+
+        if (status.calibration == "success") {
+            device.postProps({
+                Status: 2
+            });
+        }
+
+        else if (status.calibration == "failure") {
+            device.postProps({
+                Status: 3
+            });
+        }
+
+        else if (status.calibration == "processing") {
+            device.postProps({
+                Status: 4
+            });
+        }
     }
 });
 
 sub.subscribe("erase");
 sub.subscribe("imudata");
 sub.subscribe("blooddata");
+sub.subscribe("calibration")
 
 device.subscribe('/sys/a1SwQ5EKSxN/MTZRlji2GehHtZWHFu6W/thing/event/property/post/post_reply');

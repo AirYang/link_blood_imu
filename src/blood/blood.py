@@ -48,21 +48,31 @@ def readSerialPortAndSend(serialport, redishandle, bytesize):
                 # print("calibration")
                 calibrationflag = int(data.hex()[6:8], 16)
                 if calibrationflag == 0:
-                    print("calibration true")
+                    # print("calibration true")
+                    calibrationstatus = {}
+                    calibrationstatus["calibration"] = "success"
+                    redishandle.publish("calibration", json.dumps(calibrationstatus))
                     return True
                 elif calibrationflag == 2:
-                    print("calibration false")
+                    # print("calibration false")
+                    calibrationstatus = {}
+                    calibrationstatus["calibration"] = "failure"
+                    redishandle.publish("calibration", json.dumps(calibrationstatus))
                     return False
                 else:
-                    print("calibration...")
+                    # print("calibration...")
+                    # redishandle.publish("calibration", "processing") 
+                    calibrationstatus = {}
+                    calibrationstatus["calibration"] = "processing"
+                    redishandle.publish("calibration", json.dumps(calibrationstatus))
                     time.sleep(0.1)
                     return readSerialPortAndSend(serialport, redishandle, bytesize)
 
             elif int(data.hex()[0:2], 16) == 250:
                 # print("clear")
-                erasedata = {}
-                erasedata["erase"] = int(data.hex()[6:8], 16)
-                redishandle.publish("erase", json.dumps(erasedata))
+                erasestatus = {}
+                erasestatus["erase"] = int(data.hex()[6:8], 16)
+                redishandle.publish("erase", json.dumps(erasestatus))
                 return True
 
     else:
