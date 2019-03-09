@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
             imudata_json["euler"] = {d.r[0], d.r[1], d.r[2]};
             imudata_json["quaternion"] = {d.q[0], d.q[1], d.q[2], d.q[3]};
             imudata_json["acceleration"] = {d.linAcc[0], d.linAcc[1], d.linAcc[2]};
-            printf("%s\n", imudata_json.dump().c_str());
+            // printf("%s\n", imudata_json.dump().c_str());
 
             redisReply *pub_reply = static_cast<redisReply *>(redisCommand(c, "PUBLISH %b %b", "imudata", (size_t)7, imudata_json.dump().c_str(), imudata_json.dump().size()));
             // printf("redis publish return [%s]\n", pub_reply->str);

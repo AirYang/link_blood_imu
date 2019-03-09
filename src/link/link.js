@@ -58,10 +58,11 @@ sub.on("message", function (channel, message) {
     if (channel == "blooddata") {
         let blooddata = JSON.parse(message);
         let bloodtime = new Date();
-        console.log("bloodtime", bloodtime.getTime());
-        console.log("pulserate", blooddata.pulserate);
-        console.log("systolicbp", blooddata.systolicbp);
-        console.log("diastolicbp", blooddata.diastolicbp);
+        // console.log("bloodtime", bloodtime.getTime());
+        // console.log("pulserate", blooddata.pulserate);
+        // console.log("systolicbp", blooddata.systolicbp);
+        // console.log("diastolicbp", blooddata.diastolicbp);
+        console.log("blooddata", blooddata);
 
         if ((blooddata.pulserate == 0) || (blooddata.systolicbp == 0) || (blooddata.diastolicbp == 0) || (blooddata.pulserate == 255) || (blooddata.systolicbp == 255) || (blooddata.diastolicbp == 255)) {
             device.postProps({
@@ -80,10 +81,11 @@ sub.on("message", function (channel, message) {
     else if (channel == "imudata") {
         let imudata = JSON.parse(message);
         let imutime = new Date();
-        console.log("imutime", imutime.getTime());
-        console.log("euler", imudata.euler);
-        console.log("quaternion", imudata.quaternion);
-        console.log("acceleration", imudata.acceleration);
+        // console.log("imutime", imutime.getTime());
+        // console.log("euler", imudata.euler);
+        // console.log("quaternion", imudata.quaternion);
+        // console.log("acceleration", imudata.acceleration);
+        console.log("imudata", imudata);
     }
 
     // recv erase status

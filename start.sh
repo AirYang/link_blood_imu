@@ -7,7 +7,7 @@ gnome-terminal -x bash -c "cd ./redis-5.0.3; ./src/redis-server ./redis.conf"
 sleep 1
 
 # connect aliyun iot
-# gnome-terminal -x bash -c "node src/link/link.js"
+gnome-terminal -x bash -c "node src/link/link.js"
 gnome-terminal -x bash -c "node src/link/collect.js"
 
 sleep 1

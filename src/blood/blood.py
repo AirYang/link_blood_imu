@@ -158,7 +158,7 @@ def main():
             with statuslock:
                 status = "read"
 
-        time.sleep(2.0)
+        time.sleep(1.0)
 
     setsubthread.stop()
     clearsubthread.stop()

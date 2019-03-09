@@ -61,21 +61,30 @@ sub.on("error", function (error) {
 
 sub.on("message", function (channel, message) {
 
+    let readtime = new Date();
+    readtime = new Date(readtime.getTime() - readtime.getTimezoneOffset() * 60 * 1000);
+
     // recv blood data
     if (channel == "blooddata") {
         let blooddata = JSON.parse(message);
-        let bloodtime = new Date();
+        let bloodtime = readtime;
         // console.log("bloodtime", bloodtime.getTime());
         // console.log("pulserate", blooddata.pulserate);
         // console.log("systolicbp", blooddata.systolicbp);
         // console.log("diastolicbp", blooddata.diastolicbp);
 
         if (bloodname == "") {
-            bloodname = "blooddata." + bloodtime.getTime();
+            // bloodname = "blooddata." + bloodtime.getTime();
+            bloodname = "blooddata." + bloodtime.toJSON();
             set.sadd("blooddata.name", bloodname);
         }
 
-        blooddata.time = bloodtime.getTime();
+        // blooddata.time = bloodtime.getTime();
+        blooddata.time = bloodtime.toJSON();
+
+        // show blood data
+        console.log(blooddata);
+
         set.lpush(bloodname, JSON.stringify(blooddata));
 
         // if ((blooddata.pulserate == 0) || (blooddata.systolicbp == 0) || (blooddata.diastolicbp == 0) || (blooddata.pulserate == 255) || (blooddata.systolicbp == 255) || (blooddata.diastolicbp == 255)) {
@@ -94,28 +103,34 @@ sub.on("message", function (channel, message) {
     // recv imu data
     else if (channel == "imudata") {
         let imudata = JSON.parse(message);
-        let imutime = new Date();
+        let imutime = readtime;
         // console.log("imutime", imutime.getTime());
         // console.log("euler", imudata.euler);
         // console.log("quaternion", imudata.quaternion);
         // console.log("acceleration", imudata.acceleration);
 
         if (imuname == "") {
-            imuname = "imudata." + imutime.getTime();
+            // imuname = "imudata." + imutime.getTime();
+            imuname = "imudata." + imutime.toJSON();
             set.sadd("imudata.name", imuname);
 
             if (bloodname == "") {
                 console.error("bloodname is empty!");
                 process.exit();
             }
-            
+
             let relation = {};
             relation['imuname'] = imuname;
             relation['bloodname'] = bloodname;
             set.lpush("imu.blood.relation", JSON.stringify(relation));
         }
 
-        imudata.time = imutime.getTime();
+        // imudata.time = imutime.getTime();
+        imudata.time = imutime.toJSON();
+
+        // show blood data
+        console.log(imudata);
+
         set.lpush(imuname, JSON.stringify(imudata));
     }
 
