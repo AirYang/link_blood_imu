@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 #!/usr/bin/python3
 
+# import os
+import csv
 import sys
 import time
 import json
@@ -9,7 +11,15 @@ import redis
 def main():
 
     redishandle = redis.StrictRedis(host="127.0.0.1", port=6379)
+
+    fieldnames = ['group', 'time', 'pulserate', 'systolicbloodpressure', 'diastolicbloodpressure', 'quaternion', 'euler', 'acceleration']
+    csvfile = open('data/sensor.csv', 'w+', newline='')
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+    writer.writeheader()
+
+    groupcount = 20
     for key in redishandle.lrange("imu.blood.relation", 0, -1):
+        
         keyobj = json.loads(key.decode())
         
         imuname = keyobj['imuname']
@@ -18,26 +28,14 @@ def main():
         bloodname = keyobj['bloodname']
         blooddatas = redishandle.lrange(bloodname, 0, -1)[::-1]
         
-        # print(bloodname, end="\n")
-        # for blooddata in blooddatas:
-            # print(json.loads(blooddata.decode())["time"], end="\n")
-            # print(time.mktime(time.strptime(json.loads(blooddata.decode())["time"][0:20],"%Y-%m-%dT%H:%M:%S.")))
-            # pass
-        
-        # print(imuname, end="\n")
-        # for imudata in imudatas:
-            # print(json.loads(imudata.decode())["time"], end="\n")
-            # print(time.mktime(time.strptime(json.loads(imudata.decode())["time"][0:20],"%Y-%m-%dT%H:%M:%S.")))
-            # pass
-        
         paircount = 0
         imuleft = 0
         imuright = len(imudatas)
         bloodleft = 0
         bloodright = len(blooddatas)
-
+        
         while (imuleft < imuright) and (bloodleft < bloodright):
-            
+                
             imudata = json.loads(imudatas[imuleft].decode())
             imutime = time.mktime(time.strptime(imudata["time"][0:20],"%Y-%m-%dT%H:%M:%S.")) + float(imudata["time"][19:23])
 
@@ -45,8 +43,8 @@ def main():
             bloodtime = time.mktime(time.strptime(blooddata["time"][0:20],"%Y-%m-%dT%H:%M:%S.")) + float(blooddata["time"][19:23])
 
             if abs(imutime-bloodtime) < 1.0:
-                print(imutime, bloodtime)
-                print(imudata["time"], blooddata["time"])
+                writer.writerow({'group':groupcount, 'time':blooddata["time"], 'pulserate':blooddata['pulserate'], 'systolicbloodpressure':blooddata['systolicbp'], 'diastolicbloodpressure':blooddata['diastolicbp'],'quaternion':imudata['quaternion'], 'euler':imudata['euler'], 'acceleration':imudata['acceleration']})
+
                 paircount += 1
                 imuleft += 1
                 bloodleft += 1
@@ -57,12 +55,13 @@ def main():
             else:
                 imuleft += 1
         
+        groupcount -= 1
         print(imuright, imuleft)
         print(bloodright, bloodleft)
         print(paircount)
-        
-        break
+        # break
 
+    csvfile.close()
     sys.exit()
 
 if __name__ == "__main__":
