@@ -17,7 +17,7 @@ def main():
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
     writer.writeheader()
 
-    groupcount = 20
+    groupcount = 65
     for key in redishandle.lrange("imu.blood.relation", 0, -1):
         
         keyobj = json.loads(key.decode())
@@ -56,9 +56,9 @@ def main():
                 imuleft += 1
         
         groupcount -= 1
-        print(imuright, imuleft)
-        print(bloodright, bloodleft)
-        print(paircount)
+        print(imuname,imuright, imuleft)
+        print(bloodname,bloodright, bloodleft)
+        print(groupcount,paircount)
         # break
 
     csvfile.close()
