@@ -62,7 +62,7 @@ sub.on("message", function (channel, message) {
         // console.log("pulserate", blooddata.pulserate);
         // console.log("systolicbp", blooddata.systolicbp);
         // console.log("diastolicbp", blooddata.diastolicbp);
-        console.log("blooddata", blooddata);
+        // console.log("blooddata", blooddata);
 
         if ((blooddata.pulserate == 0) || (blooddata.systolicbp == 0) || (blooddata.diastolicbp == 0) || (blooddata.pulserate == 255) || (blooddata.systolicbp == 255) || (blooddata.diastolicbp == 255)) {
             device.postProps({
@@ -85,7 +85,7 @@ sub.on("message", function (channel, message) {
         // console.log("euler", imudata.euler);
         // console.log("quaternion", imudata.quaternion);
         // console.log("acceleration", imudata.acceleration);
-        console.log("imudata", imudata);
+        // console.log("imudata", imudata);
     }
 
     // recv erase status
@@ -123,11 +123,25 @@ sub.on("message", function (channel, message) {
             });
         }
     }
+
+    //recv predict blooddata
+    else if (channel == "predblooddata") {
+        let blooddata = JSON.parse(message);
+        // console.log("predblooddata", blooddata);
+        console.log("predblooddata:", blooddata.pulserate, blooddata.diastolicbp, blooddata.systolicbp)
+
+        device.postProps({
+            PulseRate: blooddata.pulserate,
+            DiastolicBloodPressure: blooddata.diastolicbp,
+            SystolicBloodPressure: blooddata.systolicbp
+        })
+    }
 });
 
 sub.subscribe("erase");
 sub.subscribe("imudata");
 sub.subscribe("blooddata");
 sub.subscribe("calibration")
+sub.subscribe("predblooddata")
 
 device.subscribe('/sys/a1SwQ5EKSxN/MTZRlji2GehHtZWHFu6W/thing/event/property/post/post_reply');

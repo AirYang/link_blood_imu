@@ -357,6 +357,8 @@ jni.h
 -
 
 /home/pi/Documents/code/link_blood_imu/src/imu/imu.cpp
+cmath
+-
 cstdio
 -
 cstring

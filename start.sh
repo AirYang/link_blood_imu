@@ -8,7 +8,7 @@ sleep 1
 
 # connect aliyun iot
 gnome-terminal -x bash -c "node src/link/link.js"
-gnome-terminal -x bash -c "node src/link/collect.js"
+# gnome-terminal -x bash -c "node src/link/collect.js"
 
 sleep 1
 
@@ -19,3 +19,8 @@ sleep 2
 
 # read imu data
 gnome-terminal -x bash -c "cd src/imu/build/; cmake ..; make; ./imu"
+
+sleep 2
+
+# analysis data
+gnome-terminal -x bash -c "python3 src/blood/analysis.py"

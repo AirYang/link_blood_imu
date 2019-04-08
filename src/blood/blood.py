@@ -37,11 +37,14 @@ def readSerialPortAndSend(serialport, redishandle, bytesize):
 
             if int(data.hex()[0:2], 16) == 253:
                 # print("read")
+                # print("blooddata:")
                 blooddata = {}
                 blooddata["systolicbp"] = int(data.hex()[2:4], 16)
                 blooddata["diastolicbp"] = int(data.hex()[4:6], 16)
                 blooddata["pulserate"] = int(data.hex()[6:8], 16)
                 redishandle.publish("blooddata", json.dumps(blooddata))
+
+                print("blooddata:", blooddata)
                 return True
 
             elif int(data.hex()[0:2], 16) == 254:

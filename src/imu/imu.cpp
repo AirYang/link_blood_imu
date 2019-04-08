@@ -1,3 +1,4 @@
+#include <cmath>
 #include <cstdio>
 #include <cstring>
 #include <thread>
@@ -52,6 +53,7 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
+    // double v[3] = {0};
     while(1) 
     {		 
         // Checks, if sensor is connected
@@ -74,7 +76,13 @@ int main(int argc, char *argv[])
             imudata_json["euler"] = {d.r[0], d.r[1], d.r[2]};
             imudata_json["quaternion"] = {d.q[0], d.q[1], d.q[2], d.q[3]};
             imudata_json["acceleration"] = {d.linAcc[0], d.linAcc[1], d.linAcc[2]};
-            // printf("%s\n", imudata_json.dump().c_str());
+            printf("%s\n", imudata_json.dump().c_str());
+
+            // compute speed
+            // v[0] += d.linAcc[0] * 0.01;
+            // v[1] += d.linAcc[1] * 0.01;
+            // v[2] += d.linAcc[2] * 0.01;
+            // printf("%lf\n", sqrt(pow(v[0], 2)+pow(v[1], 2)+pow(v[2], 2)));
 
             redisReply *pub_reply = static_cast<redisReply *>(redisCommand(c, "PUBLISH %b %b", "imudata", (size_t)7, imudata_json.dump().c_str(), imudata_json.dump().size()));
             // printf("redis publish return [%s]\n", pub_reply->str);
