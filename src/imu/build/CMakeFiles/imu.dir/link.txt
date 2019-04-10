@@ -1,1 +1,0 @@
-/usr/bin/c++    -std=c++11 -std=gnu++11 -O3 -DNDEBUG   CMakeFiles/imu.dir/imu.o  -o imu  -L/home/pi/Documents/code/link_blood_imu/src/imu/lib -Wl,-rpath,/home/pi/Documents/code/link_blood_imu/src/imu/lib -rdynamic -lLpSensor -Wl,-Bstatic -lhiredis -Wl,-Bdynamic -lpthread -ldl -lrt 

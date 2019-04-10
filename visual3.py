@@ -5,7 +5,7 @@ import csv
 import time
 import math
 import numpy as np
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 from sklearn.preprocessing import StandardScaler
 from sklearn.neural_network import MLPRegressor
 from sklearn import linear_model
@@ -483,10 +483,10 @@ def train_data(datalist):
         # adaboost_pt.fit(train_x_fit, train_y_pt)
         # test_y_pt = adaboost_pt.predict(test_x_fit)
 
-        adaboost_sbp = AdaBoostRegressor(
-            DecisionTreeRegressor(max_depth=6), n_estimators=900)
-        adaboost_sbp.fit(train_x_fit, train_y_sbp)
-        joblib.dump(adaboost_sbp, "sbp.m")
+        # adaboost_sbp = AdaBoostRegressor(
+        #     DecisionTreeRegressor(max_depth=6), n_estimators=900)
+        # adaboost_sbp.fit(train_x_fit, train_y_sbp)
+        # joblib.dump(adaboost_sbp, "sbp.m")
         # test_y_sbp = adaboost_sbp.predict(test_x_fit)
 
         # adaboost_dbp = AdaBoostRegressor(
@@ -508,10 +508,10 @@ def train_data(datalist):
         # knn_pt.fit(train_x_fit, train_y_pt)
         # test_y_pt = knn_pt.predict(test_x_fit)
 
-        # knn_sbp = neighbors.KNeighborsRegressor(
-        #     n_neighbors=5, weights="uniform")
-        # knn_sbp.fit(train_x_fit, train_y_sbp)
-        # joblib.dump(knn_sbp, "sbp.m")
+        knn_sbp = neighbors.KNeighborsRegressor(
+            n_neighbors=5, weights="uniform")
+        knn_sbp.fit(train_x_fit, train_y_sbp)
+        joblib.dump(knn_sbp, "sbp.m")
         # test_y_sbp = knn_sbp.predict(test_x_fit)
 
         # knn_dbp = neighbors.KNeighborsRegressor(
@@ -642,58 +642,58 @@ def train_data(datalist):
 def show_err(ids, errors):
     # ids = ["original", "mlp", "bayesian", "adaboost", "knn", "gradient"]
     # errors = [originalerrors, mlperrors, bayesianerrors, adaboosterrors, knnerrors, gradienterrors]
-    # ptsum = []
-    # sbpsum = []
-    # dbpsum = []
+    ptsum = []
+    sbpsum = []
+    dbpsum = []
 
-    # mptsum = []
-    # msbpsum = []
-    # mdbpsum = []
+    mptsum = []
+    msbpsum = []
+    mdbpsum = []
 
-    # for elem in errors:
-    #     ptsum.append(math.sqrt(sum([c*c for c in elem[0]])/len(elem[0])))
-    #     sbpsum.append(math.sqrt(sum([c*c for c in elem[1]])/len(elem[1])))
-    #     dbpsum.append(math.sqrt(sum([c*c for c in elem[2]])/len(elem[2])))
+    for elem in errors:
+        ptsum.append(math.sqrt(sum([c*c for c in elem[0]])/len(elem[0])))
+        sbpsum.append(math.sqrt(sum([c*c for c in elem[1]])/len(elem[1])))
+        dbpsum.append(math.sqrt(sum([c*c for c in elem[2]])/len(elem[2])))
 
-    #     mptsum.append(sum(elem[0])/len(elem[0]))
-    #     msbpsum.append(sum(elem[1])/len(elem[1]))
-    #     mdbpsum.append(sum(elem[2])/len(elem[2]))
+        mptsum.append(sum(elem[0])/len(elem[0]))
+        msbpsum.append(sum(elem[1])/len(elem[1]))
+        mdbpsum.append(sum(elem[2])/len(elem[2]))
     
 
-    # print("ptsum", ptsum)
-    # print("sbpsum", sbpsum)
-    # print("dbpsum", dbpsum)
+    print("ptsum", ptsum)
+    print("sbpsum", sbpsum)
+    print("dbpsum", dbpsum)
 
-    # print("mptsum", mptsum)
-    # print("msbpsum", msbpsum)
-    # print("mdbpsum", mdbpsum)
+    print("mptsum", mptsum)
+    print("msbpsum", msbpsum)
+    print("mdbpsum", mdbpsum)
 
-    #  # for error bar
-    # fig = plt.figure(num="error-compare", figsize=[10, 7])
-    # # ids = [str(x) for x in range(len(datalist))]
+     # for error bar
+    fig = plt.figure(num="error-compare", figsize=[10, 7])
+    # ids = [str(x) for x in range(len(datalist))]
 
-    # x = list(range(len(errors)))
-    # total_width, n = 0.9, 3
-    # width = total_width / n
-    # # x = x - (total_width - width) / 2
+    x = list(range(len(errors)))
+    total_width, n = 0.9, 3
+    width = total_width / n
+    # x = x - (total_width - width) / 2
 
-    # errplot = fig.add_subplot(111)
-    # errplot.bar(x, ptsum, width=width, label="pulserate")
+    errplot = fig.add_subplot(111)
+    errplot.bar(x, ptsum, width=width, label="pulserate")
 
-    # errplot.bar([c+width for c in x], sbpsum, width=width,
-    #             label="systolicbp", tick_label=ids)
+    errplot.bar([c+width for c in x], sbpsum, width=width,
+                label="systolicbp", tick_label=ids)
 
-    # errplot.bar([c+width*2 for c in x], dbpsum,
-    #             width=width, label="diastolicbp")
-    # errplot.legend()
+    errplot.bar([c+width*2 for c in x], dbpsum,
+                width=width, label="diastolicbp")
+    errplot.legend()
 
-    # errplot.set_xlabel("$group.id$")
-    # errplot.set_title("RMSD")
+    errplot.set_xlabel("$group.id$")
+    errplot.set_title("RMSD")
 
-    # plt.tight_layout()
-    # plt.subplots_adjust(hspace=0.3)
-    # plt.savefig("image/errorcompare.jpg")
-    # # plt.show()
+    plt.tight_layout()
+    plt.subplots_adjust(hspace=0.3)
+    plt.savefig("image/errorcompare.jpg")
+    # plt.show()
 
     pass
 
